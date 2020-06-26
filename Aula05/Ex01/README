@@ -1,0 +1,6 @@
+make all compila o executável
+
+make run roda o executável
+
+target é um programinha simples que pode ser executado através do mybash
+

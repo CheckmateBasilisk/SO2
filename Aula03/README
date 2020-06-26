@@ -1,0 +1,3 @@
+Os exercícios foram resolvidos no terminal. Dentro de cada pasta há um makefile cujas diretrizes são os comandos que resolveram os itens dos exercícios e justificativas. make a, make b, make c ... 
+
+Há também, em um arquivo .txt o conteúdo transcrito dos makefiles

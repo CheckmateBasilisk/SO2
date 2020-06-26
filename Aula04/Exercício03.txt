@@ -1,0 +1,86 @@
+ex1)
+    a)
+
+    #include<signal.h>
+    #include<string.h>
+
+    sig_atomic_t sigusr1_count = 0;
+
+    //will be called whenever an interruption with the signal occurs
+    //has a parameter because the struct sigaction demands it
+    void interruption(int signal_id){
+        sigusr1_count+=1;
+        return;
+    }
+
+    int main(int argc, char *argv[]){
+
+        //setting up the "interruption infrastructure"
+        struct sigaction sa;
+        memset(&sa, 0, sizeof(sa));
+        sa.sa_handler = &interruption;
+        sigaction(SIGUSR1, &sa, NULL);
+
+
+        printf("b4\n");
+        //this can be interrupted many times
+        for(int i =0 ; i <30; i++){
+            sleep(30);
+        }
+        //this can only be interrupted once!
+        //sleep(30);
+        printf("after\n");
+
+        printf("sigusr1: %d\n", sigusr1_count);
+
+        return 0;
+    }
+
+    i) Cada sinal faz com que o programa invoque a interrupção uma vez, que incrementa o contador global. Ao fim imprime o valor do contador
+
+
+ex2)
+    #include<stdio.h> 
+    #include<stdlib.h> 
+    #include<sys/wait.h> 
+    #include<unistd.h> 
+
+    int main(int argc, char *argv[]){
+       
+        pid_t pid;//stores the PID of the current program
+            //fork returns >0 if the current process is the parent
+            //fork returns 0 if the current process is the child 
+        printf("starting process PID: %d\n",(int) getpid());
+        pid = fork();
+
+        //will wait until the child returns (and prints all the even numbers in the process)
+        int child_status = -1; // keeps the exit/return status of the child
+        wait(&child_status);
+        if(child_status != -1){//child has returned alredy. Doesn't work all the times
+            if(WIFEXITED(child_status)){
+                printf("child returned: %d\n", WEXITSTATUS(child_status));
+            }else{
+                printf("child was aborted");
+            }
+        }
+        //child will count even
+        if(pid == 0){
+            for(int i =0; i < 20; i+=2){
+                printf("child: %d\n", i);
+            }
+        //parent will count odd 
+        }else if(pid!=0){
+            for(int i =1; i < 20; i+=2){
+                printf("parent: %d\n", i);
+            }
+        }
+
+        //esse foi o código q eu usei pra aprender a usar fork
+
+ex3)
+    todo processo que fica sem pai é herdado pelo init. Quando um zumbi sem pai é herdado, o init o encerra.
+
+
+ex4)
+    enquanto o processo pai está em execução, qualquer filho é recolhido através da função wait(), ou seja, enquanto ativo, o pai não deixa zumbis. Depois de encerrado, seus filhos são herdados por init, que os encerra assim que se tornam zumbis (já que não possuem mais processo pai para recolhe-los)
+

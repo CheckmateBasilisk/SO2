@@ -1,0 +1,13 @@
+quando vc dá um fork, como a Heap se comporta?
+    - tem cara de serem copiadas só as referências...
+    - quem é dono da heap? só pai ou pai e filho?
+
+como o sistema faz o gerenciamento de tempo no fork?
+    - aparentemente, pelo teste q eu fiz não, mas é thread msm? ou ambos compartilham tempo do mesmo núcleo?
+
+
+sobre execvp(), o processo spawnado espera por um ENTER pra terminar. Pq??
+
+sobre a struct sigaction, sa.sa_handler é um ponteiro de fç com um parâmetro int. Não dá pra fazer vários sigactions diferentes, cada um apontando pra uma fç diferente (tratando de sinais diferentes, desse jeito)?
+
+sobre interrupções. se eu colocar sleep dentro de for posso interromper várias vezes. um sleep só pode ser interrompido uma vez. O endereço de retorno é onde? é particularidade da fç sleep q não consegue voltar a dormir depois d interrompido?
