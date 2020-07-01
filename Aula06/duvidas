@@ -1,0 +1,1 @@
+9:56 chamar uma função numa thread usa o msm espaço da stack?? ou cada thread vai empilhando sobre o q a outra já empilhou?
