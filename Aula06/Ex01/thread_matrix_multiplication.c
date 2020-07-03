@@ -12,7 +12,6 @@ void print_matrix(int **, int , int );
 struct sum_array_thread_params{
     int *array;
     int length;
-    int *result;
 };
 
 //thread function
@@ -21,28 +20,21 @@ struct sum_array_thread_params{
 void *sum_array_thread(void *params){
     intptr_t sum = 0;
     int *array, length;
-    struct sum_array_thread_params *p = params;
+//    struct sum_array_thread_params *p = params;
     //treats params as a pointer to the struct so it can get the fields correctly
-//    array = ((struct sum_array_thread_params *) params)->array;
-//    length = ((struct sum_array_thread_params *) params)->length;
-
+    array = ((struct sum_array_thread_params *) params)->array;
+    length = ((struct sum_array_thread_params *) params)->length;
+/*
     array = p->array;
     length = p->length;
+*/
 
     for(int i=0; i<length; i++){
         sum += array[i];
     }
 
-    //returning ptr to local variable can break things!
-    //return &sum;
-
-    //this looks disgusting...
-    //return ((struct sum_array_thread_params *) params)->return;
-
-    //puts the partial sum where the params tells it to
-//    * ((struct sum_array_thread_params *) params)->result = sum;
-    *p->result = sum;
-    return NULL;
+    //returning ptr to local variable shouldn't break things?!
+    return (void *) sum;
 }
 
 int main(int argc, char *argv[]){
@@ -54,18 +46,15 @@ int main(int argc, char *argv[]){
     //will create a thread per row
     thread_id = (pthread_t *) malloc(sizeof(pthread_t)*row);
     int *partial_sum = (int *) malloc(sizeof(int)*row);
-    struct sum_array_thread_params params;
+    //making separate memory spaces is necessary, since it would create another thread before the first one was done using the shared space
+    // i thought getting the info out of the shared space quickly was enough but obviously I was mistaken ç__ç
+    struct sum_array_thread_params params[3];
     for(int i=0; i < row; i++){
         //spawns a thread for every row of the matrix
         //the thread calculates the sum of all elements in that row
-
-        params.array = m[i];
-        params.length = col;
-        params.result = &partial_sum[i];
-/*
-printf("params: %p, %d, %p\n", params.array, params.length, params.result);
-*/
-        pthread_create(&(thread_id[i]), NULL, &sum_array_thread, &params);
+        params[i].array = m[i];
+        params[i].length = col;
+        pthread_create(&(thread_id[i]), NULL, &sum_array_thread, &(params[i]));
     }
 
     //waits for threads to finish, joining them
@@ -74,18 +63,18 @@ printf("params: %p, %d, %p\n", params.array, params.length, params.result);
     int sum = 0;
     for(int i=0; i < row; i++){
         //had lots of problems getting the return to work :c
-        pthread_join(thread_id[i], NULL);
+        pthread_join(thread_id[i], (void *) &(partial_sum[i]));
         printf("Linha %d: %d\n", i+1, partial_sum[i]);
         sum += partial_sum[i];
     }
     printf("Total: %d\n", sum);
-
 
     free(thread_id);
     free(partial_sum);
     free_matrix(m, row);
     return 0;
 }
+
 
 
 
@@ -111,9 +100,8 @@ void free_matrix(int **m, int row){
 }
 
 
-
-
 // returns the sum of elements in an array with given length
+// does not use threads
 int sum_array(int *array, int length){
     int sum = 0;
     for(int i=0;i<length;i++) sum += array[i];
@@ -122,7 +110,6 @@ int sum_array(int *array, int length){
 
 // prints to stdio a row x col integer matrix
 void print_matrix(int **m, int row, int col){
-
     for(int i=0; i<row; i ++){
         for(int j=0;j<col;j++){
             printf("%d ", m[i][j]);
