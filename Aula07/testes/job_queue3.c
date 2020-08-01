@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<malloc.h>
 #include<pthread.h>
+#include<semaphore.h>
 
 //linked list for the job queue
 struct job{
@@ -9,6 +10,20 @@ struct job{
 }
 
 struct job *job_queue;
+
+// semaphore to deal with the job-getting operations
+sem_t job_queue_sem;
+
+// innitializes the job queue appropriatelly
+void innitialize_job_queue(struct job *job_queue, sem_ t semaphore){
+    *job_queue = NULL;
+    sem_init(semaphore, 0, 0)
+    //int sem_init(sem_t *sem, int pshared, unsigned int value);
+    //pshared = 0 => semaphore is shared between threads of the same process
+    //pshared != 0 => semaphore is shared between processess. It also should be located in shared memory! (shmget and stuff...)
+
+    return;
+}
 
 extern void process_job(struct job*);
 
