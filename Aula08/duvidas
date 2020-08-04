@@ -1,0 +1,3 @@
+em shared memory
+    qual o propósito e o efeito de dar attatch em espaços diferentes de memória?
+    não faz sentido q o ptr shared_memory aponte pra outro lugar senão o início do segmento de memória compartilhado. Como ele consegue imprimir a string q foi colocada no começo do segmento???
