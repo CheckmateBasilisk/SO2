@@ -65,7 +65,7 @@ int print_shell(char *user, char *cwd, char *hostname){
 int run_cmd(char *cmd){
     char **args = strToWords(cmd,' ');
     int returnValue = 0;
-    //will break if path has ' ' like cd ./"foo bar" :c
+    //TODO will break if path has ' ' like cd ./"foo bar" :c
     if(strcmp(args[0],"cd") == 0){
         if (chdir(args[1]) == -1){
             fprintf(stderr,"Error: no such file of directory.\n");

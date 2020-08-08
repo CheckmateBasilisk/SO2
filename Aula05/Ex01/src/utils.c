@@ -44,7 +44,7 @@ char *appendString(char *str1, char *str2){
 // it puts somthing bizarre between the last word and null {'ls', ???, NULL}
 //TODO for some reason '.' breaks the tokenization on its tracks "foo . bar" => {"foo", ".", NULL}
 char **strToWords(char *src, int delimiter){
-    char **word=NULL;
+    char **word = NULL;
     char *newWord;//just a temporary holder for each word
     int i = 0;//counts through src
     int wordcount = 0;
